@@ -417,6 +417,26 @@
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-rose) 16%, transparent);
   }
 
+  .field-input[aria-invalid="true"],
+  .field-textarea[aria-invalid="true"] {
+    border-color: color-mix(in srgb, var(--c-red) 62%, var(--c-paper-deep));
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-red) 10%, transparent);
+  }
+
+  .field-error {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--c-red);
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .field-error svg {
+    flex: 0 0 auto;
+  }
+
   .link-quiet {
     display: inline-flex;
     align-items: center;
