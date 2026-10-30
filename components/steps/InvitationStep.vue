@@ -10,26 +10,27 @@ import {
 } from 'vue'
 import { useCopy } from '~/composables/useCopy'
 import { useDateFlow } from '~/composables/useDateFlow'
+import { prefersReducedMotion } from '~/composables/useReducedMotion'
 import { romanticConfig } from '~/config/romantic.config'
 
 const messages = romanticConfig.messages
 const copy = useCopy()
-const { acceptInvitation, declineInvitation } = useDateFlow()
+const { acceptInvitation } = useDateFlow()
 
-const maxDodges = romanticConfig.noButton.maxDodges
 const MARGIN = 16
+const HOP_MS = 170
 
 const noButtonRef = ref<HTMLButtonElement | null>(null)
-const acceptButtonRef = ref<HTMLElement | null>(null)
-const attempts = ref(0)
+const messageIndex = ref(0)
 const isFloating = ref(false)
-const isExhausted = ref(false)
+const isHopping = ref(false)
 const message = ref('')
 
 const floatingPosition = reactive({ left: 0, top: 0 })
 const buttonSize = reactive({ width: 0, height: 0 })
 
 let lastPointerDodge = 0
+let hopTimer: ReturnType<typeof setTimeout> | null = null
 
 const floatingStyle = computed(() => ({
   left: `${floatingPosition.left}px`,
@@ -65,7 +66,8 @@ function choosePosition(): { left: number; top: number } {
   const viewportHeight = window.innerHeight
   const maxLeft = Math.max(MARGIN, viewportWidth - buttonSize.width - MARGIN)
   const maxTop = Math.max(MARGIN, viewportHeight - buttonSize.height - MARGIN)
-  const acceptRect = acceptButtonRef.value?.getBoundingClientRect() ?? null
+  const acceptRect =
+    document.getElementById('accept-invitation')?.getBoundingClientRect() ?? null
   const minDistance = Math.min(
     180,
     Math.max(70, Math.min(viewportWidth, viewportHeight) * 0.22),
@@ -115,8 +117,29 @@ function ensureInViewport(): void {
   floatingPosition.top = clamp(floatingPosition.top, MARGIN, maxTop)
 }
 
+function nextMessage(): string {
+  const index = messageIndex.value % messages.noDodgeMessages.length
+  messageIndex.value += 1
+  return messages.noDodgeMessages[index] ?? ''
+}
+
+async function finishDodge(options: { focusAfter?: boolean } = {}): Promise<void> {
+  message.value = nextMessage()
+
+  const nextPosition = choosePosition()
+  floatingPosition.left = nextPosition.left
+  floatingPosition.top = nextPosition.top
+
+  await nextTick()
+  isHopping.value = false
+
+  if (options.focusAfter) {
+    noButtonRef.value?.focus({ preventScroll: true })
+  }
+}
+
 async function dodge(options: { focusAfter?: boolean } = {}): Promise<void> {
-  if (isExhausted.value) return
+  if (isHopping.value) return
 
   if (!isFloating.value) {
     const rect = noButtonRef.value?.getBoundingClientRect()
@@ -132,51 +155,29 @@ async function dodge(options: { focusAfter?: boolean } = {}): Promise<void> {
     void noButtonRef.value?.getBoundingClientRect()
   }
 
-  attempts.value = Math.min(attempts.value + 1, maxDodges)
-
-  if (attempts.value >= maxDodges) {
-    isExhausted.value = true
-    message.value = messages.noDodgeExhausted
-  } else {
-    const index = (attempts.value - 1) % messages.noDodgeMessages.length
-    message.value = messages.noDodgeMessages[index] ?? ''
+  if (prefersReducedMotion()) {
+    await finishDodge(options)
+    return
   }
 
-  const nextPosition = choosePosition()
-  floatingPosition.left = nextPosition.left
-  floatingPosition.top = nextPosition.top
-
-  if (options.focusAfter) {
-    await nextTick()
-    noButtonRef.value?.focus({ preventScroll: true })
-  }
+  isHopping.value = true
+  hopTimer = setTimeout(() => {
+    hopTimer = null
+    void finishDodge(options)
+  }, HOP_MS)
 }
 
 function handlePointerEnter(event: PointerEvent): void {
-  if (event.pointerType !== 'mouse' || isExhausted.value) return
+  if (event.pointerType !== 'mouse') return
 
   const now = Date.now()
-  if (now - lastPointerDodge < 360) return
+  if (now - lastPointerDodge < 320) return
   lastPointerDodge = now
   void dodge()
 }
 
 function handleNoClick(event: MouseEvent): void {
-  if (isExhausted.value) {
-    declineInvitation()
-    return
-  }
-
   void dodge({ focusAfter: event.detail === 0 })
-}
-
-function giveUpDodging(): void {
-  isExhausted.value = true
-  message.value = messages.noDodgeExhausted
-
-  void nextTick(() => {
-    noButtonRef.value?.focus({ preventScroll: true })
-  })
 }
 
 function handleResize(): void {
@@ -189,6 +190,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  if (hopTimer) clearTimeout(hopTimer)
   window.removeEventListener('resize', handleResize)
   window.visualViewport?.removeEventListener('resize', handleResize)
 })
@@ -234,7 +236,6 @@ onBeforeUnmount(() => {
         <div class="invitation__actions">
           <BaseButton
             id="accept-invitation"
-            ref="acceptButtonRef"
             size="lg"
             class="invitation__yes"
             @click="acceptInvitation"
@@ -275,13 +276,10 @@ onBeforeUnmount(() => {
         </p>
 
         <p id="no-dodge-help" class="sr-only">
-          Brincadeira: este botão foge quando você tenta clicar. Se preferir,
-          use a opção “{{ messages.noHelp }}” para pará-lo e responder com calma.
+          Brincadeira: o botão “não” foge sempre que você tenta clicar nele.
+          Ele pode aparecer em qualquer canto da tela. O botão “sim” continua
+          aqui, esperando por você.
         </p>
-
-        <button type="button" class="calm-link" @click="giveUpDodging">
-          {{ messages.noHelp }}
-        </button>
 
         <p class="hand-note invitation__note">
           {{ messages.invitationNote }}
@@ -290,25 +288,25 @@ onBeforeUnmount(() => {
     </div>
 
     <AppFooter />
-  </section>
 
-  <Teleport to="body">
-    <button
-      v-if="isFloating"
-      ref="noButtonRef"
-      type="button"
-      class="no-button no-button--floating"
-      :class="{ 'is-tired': isExhausted }"
-      :style="floatingStyle"
-      title="O botão está fugindo 👀"
-      aria-describedby="no-dodge-help invitation-message"
-      @pointerenter="handlePointerEnter"
-      @click="handleNoClick"
-    >
-      {{ messages.noLabel }}
-      <span aria-hidden="true">🙈</span>
-    </button>
-  </Teleport>
+    <Teleport to="body">
+      <button
+        v-if="isFloating"
+        ref="noButtonRef"
+        type="button"
+        class="no-button no-button--floating"
+        :class="{ 'is-hopping': isHopping }"
+        :style="floatingStyle"
+        title="O botão está fugindo 👀"
+        aria-describedby="no-dodge-help invitation-message"
+        @pointerenter="handlePointerEnter"
+        @click="handleNoClick"
+      >
+        {{ messages.noLabel }}
+        <span aria-hidden="true">🙈</span>
+      </button>
+    </Teleport>
+  </section>
 </template>
 
 <style scoped>
@@ -453,16 +451,17 @@ onBeforeUnmount(() => {
     0 20px 48px -20px color-mix(in srgb, var(--c-rose-deep) 58%, transparent),
     0 4px 16px -8px color-mix(in srgb, var(--c-ink) 26%, transparent);
   transition:
-    left 580ms var(--ease-romantic),
-    top 580ms var(--ease-romantic),
+    opacity 170ms var(--ease-soft),
+    transform 170ms var(--ease-romantic),
     box-shadow var(--dur-base) var(--ease-soft),
     border-color var(--dur-fast) var(--ease-soft),
     background-color var(--dur-fast) var(--ease-soft);
 }
 
-.no-button--floating.is-tired {
-  border-color: color-mix(in srgb, var(--c-rose) 62%, var(--c-paper-deep));
-  background: var(--c-paper-soft);
+.no-button--floating.is-hopping {
+  opacity: 0;
+  transform: scale(0.7) rotate(-10deg);
+  pointer-events: none;
 }
 
 .invitation__message {
@@ -472,26 +471,6 @@ onBeforeUnmount(() => {
   font-size: 0.86rem;
   font-weight: 700;
   line-height: 1.5;
-}
-
-.calm-link {
-  min-height: 2.5rem;
-  padding: 0.2rem 0.3rem;
-  border: 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--c-ink-soft) 24%, transparent);
-  background: transparent;
-  color: color-mix(in srgb, var(--c-ink-soft) 78%, transparent);
-  font-size: 0.69rem;
-  font-weight: 700;
-  line-height: 1.4;
-  transition:
-    color var(--dur-fast) var(--ease-soft),
-    border-color var(--dur-fast) var(--ease-soft);
-}
-
-.calm-link:hover {
-  border-color: color-mix(in srgb, var(--c-rose) 45%, transparent);
-  color: var(--c-rose-deep);
 }
 
 .invitation__note {

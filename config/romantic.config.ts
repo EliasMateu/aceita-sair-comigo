@@ -44,7 +44,6 @@ export const romanticConfig: RomanticConfig = {
     invitationNote: 'Prometo que não mordo. 😌',
     yesLabel: 'Sim, eu aceito',
     noLabel: 'Não',
-    noHelp: 'Sem pressão: prefiro responder com calma',
     noDodgeMessages: [
       'Tem certeza? 🥺',
       'Pensa com carinho...',
@@ -52,9 +51,11 @@ export const romanticConfig: RomanticConfig = {
       'Olha o outro botão ali! 💗',
       'Vai ser legal, prometo!',
       'Você não vai me deixar nessa, né? 👀',
+      'Esse botão não funciona hoje 😅',
+      'Já tentou o “sim”? Ele tá bem ali! ✨',
+      'O destino já decidiu por nós. 💫',
+      'Não vale insistir, viu? 😌',
     ],
-    noDodgeExhausted:
-      'Tudo bem... o botão cansou de fugir. Agora ele te deixa escolher de verdade. 🤍',
 
     declineEyebrow: 'Tudo certo',
     declineTitle: 'Tudo bem, de verdade.',
@@ -83,6 +84,7 @@ export const romanticConfig: RomanticConfig = {
     chooseCustomPlaceholder:
       'Ex.: um piquenique no fim da tarde, ver o pôr do sol...',
     chooseCustomError: 'Me conta a sua ideia pra eu poder planejar. 💗',
+    chooseErrorOption: 'Escolhe uma das ideias — ou inventa a sua. 💗',
     chooseNote:
       'Pode mudar de ideia depois. Isso aqui é sobre a gente, não sobre acertar.',
 
@@ -272,10 +274,6 @@ export const romanticConfig: RomanticConfig = {
     ],
     defaultTime: '19:30',
     maxMonthsAhead: 18,
-  },
-
-  noButton: {
-    maxDodges: 6,
   },
 
   music: {

@@ -59,10 +59,6 @@ export interface RomanticTheme {
   gold: string
 }
 
-export interface NoButtonSettings {
-  maxDodges: number
-}
-
 export interface ScheduleSettings {
   timeSlots: string[]
   defaultTime: string | null
@@ -107,9 +103,7 @@ export interface RomanticMessages {
   invitationNote: string
   yesLabel: string
   noLabel: string
-  noHelp: string
   noDodgeMessages: string[]
-  noDodgeExhausted: string
   declineEyebrow: string
   declineTitle: string
   declineTitleAccent: string
@@ -131,6 +125,7 @@ export interface RomanticMessages {
   chooseCustomLabel: string
   chooseCustomPlaceholder: string
   chooseCustomError: string
+  chooseErrorOption: string
   chooseNote: string
   scheduleEyebrow: string
   scheduleTitle: string
@@ -229,7 +224,6 @@ export interface RomanticConfig {
   theme: RomanticTheme
   dateOptions: DateOption[]
   schedule: ScheduleSettings
-  noButton: NoButtonSettings
   music: MusicSettings
   calendar: CalendarSettings
   celebration: CelebrationSettings
