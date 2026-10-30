@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch, type Component } from 'vue'
+import CelebrationStep from '~/components/steps/CelebrationStep.vue'
+import ChooseStep from '~/components/steps/ChooseStep.vue'
 import DeclinedStep from '~/components/steps/DeclinedStep.vue'
 import InvitationStep from '~/components/steps/InvitationStep.vue'
 import WelcomeStep from '~/components/steps/WelcomeStep.vue'
@@ -17,6 +19,8 @@ const stepComponents: Partial<Record<FlowStep, Component>> = {
   welcome: WelcomeStep,
   invitation: InvitationStep,
   declined: DeclinedStep,
+  celebration: CelebrationStep,
+  choose: ChooseStep,
 }
 
 const currentComponent = computed(
