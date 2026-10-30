@@ -56,6 +56,16 @@ export function buildWhatsAppUrl(
   message: string,
 ): string | null {
   const digits = sanitizeWhatsAppNumber(number)
+
   if (digits.length < 10) return null
-  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`
+
+  const url = new URL(`https://wa.me/${digits}`)
+
+  url.searchParams.set('text', message)
+
+  console.log('1. Mensagem original:', message)
+  console.log('2. URL gerada:', url.toString())
+  console.log('3. Mensagem decodificada:', url.searchParams.get('text'))
+
+  return url.toString()
 }
