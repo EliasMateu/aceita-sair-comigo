@@ -3,7 +3,10 @@ import { computed, nextTick, onMounted, ref, watch, type Component } from 'vue'
 import CelebrationStep from '~/components/steps/CelebrationStep.vue'
 import ChooseStep from '~/components/steps/ChooseStep.vue'
 import DeclinedStep from '~/components/steps/DeclinedStep.vue'
+import FinaleStep from '~/components/steps/FinaleStep.vue'
 import InvitationStep from '~/components/steps/InvitationStep.vue'
+import ScheduleStep from '~/components/steps/ScheduleStep.vue'
+import SummaryStep from '~/components/steps/SummaryStep.vue'
 import WelcomeStep from '~/components/steps/WelcomeStep.vue'
 import { useDateFlow } from '~/composables/useDateFlow'
 import { useReducedMotion } from '~/composables/useReducedMotion'
@@ -21,6 +24,9 @@ const stepComponents: Partial<Record<FlowStep, Component>> = {
   declined: DeclinedStep,
   celebration: CelebrationStep,
   choose: ChooseStep,
+  schedule: ScheduleStep,
+  summary: SummaryStep,
+  finale: FinaleStep,
 }
 
 const currentComponent = computed(
@@ -74,7 +80,11 @@ onMounted(() => {
 
     <main id="conteudo" ref="main" class="app-main" tabindex="-1">
       <Transition name="scene" mode="out-in" @after-enter="handleAfterEnter">
-        <component :is="currentComponent" :key="state.step" />
+        <component
+          :is="currentComponent"
+          :key="state.step"
+          @restart="openReset"
+        />
       </Transition>
     </main>
 

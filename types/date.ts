@@ -132,11 +132,14 @@ export interface RomanticMessages {
   scheduleTitleAccent: string
   scheduleLead: string
   scheduleModeDate: string
+  scheduleModeDateHint: string
   scheduleModeLater: string
+  scheduleModeLaterHint: string
   scheduleLaterTitle: string
   scheduleLaterText: string
   scheduleDateLabel: string
   scheduleTimeLabel: string
+  scheduleTimeHint: string
   scheduleNotesLabel: string
   scheduleNotesPlaceholder: string
   scheduleContinue: string

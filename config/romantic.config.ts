@@ -94,12 +94,16 @@ export const romanticConfig: RomanticConfig = {
     scheduleLead:
       'Escolhe um dia que fique bom pra você. Se preferir, a gente combina pelo WhatsApp.',
     scheduleModeDate: 'Escolher um dia',
+    scheduleModeDateHint: 'Um dia e um horário pra gente guardar.',
     scheduleModeLater: 'Combinar depois',
+    scheduleModeLaterHint: 'A gente acerta os detalhes no WhatsApp.',
     scheduleLaterTitle: 'Deixa que a gente combina com calma.',
     scheduleLaterText:
       'Sem problema nenhum. Depois você me chama pelo WhatsApp e a gente encontra um dia que fique bom pra nós dois.',
     scheduleDateLabel: 'O dia',
     scheduleTimeLabel: 'O horário',
+    scheduleTimeHint:
+      'Escolhe o horário que fica melhor pra você. A gente ajusta se precisar.',
     scheduleNotesLabel: 'Alguma observação? (opcional)',
     scheduleNotesPlaceholder:
       'Algo que você queira me contar, um lugar que ama, uma restrição...',
