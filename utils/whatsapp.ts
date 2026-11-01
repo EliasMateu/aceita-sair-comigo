@@ -63,9 +63,5 @@ export function buildWhatsAppUrl(
 
   url.searchParams.set('text', message)
 
-  console.log('1. Mensagem original:', message)
-  console.log('2. URL gerada:', url.toString())
-  console.log('3. Mensagem decodificada:', url.searchParams.get('text'))
-
   return url.toString()
 }

@@ -190,6 +190,8 @@ function handleNavigate(step: FlowStep): void {
                 :min-date="today"
                 :max-months-ahead="schedule.maxMonthsAhead"
                 :label="messages.scheduleDateLabel"
+                :invalid="Boolean(dateError)"
+                :error-id="dateError ? 'schedule-date-error' : undefined"
                 @update:model-value="handleDate"
               />
 
@@ -205,7 +207,12 @@ function handleNavigate(step: FlowStep): void {
             </div>
 
             <div class="paper-panel schedule__time-panel">
-              <fieldset ref="timeFieldsetRef" class="schedule__time-fieldset">
+              <fieldset
+                ref="timeFieldsetRef"
+                class="schedule__time-fieldset"
+                :aria-invalid="timeError ? 'true' : undefined"
+                :aria-describedby="timeError ? 'schedule-time-error' : undefined"
+              >
                 <legend class="field-label schedule__time-label">
                   <Clock3 :size="13" aria-hidden="true" />
                   {{ messages.scheduleTimeLabel }}
@@ -485,7 +492,7 @@ function handleNavigate(step: FlowStep): void {
 .time-chip {
   position: relative;
   display: grid;
-  min-height: 2.55rem;
+  min-height: 2.75rem;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--c-rose) 18%, var(--c-paper-deep));
   border-radius: 0.8rem;

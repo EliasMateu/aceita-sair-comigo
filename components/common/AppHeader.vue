@@ -181,8 +181,8 @@ const showRestart = computed(() => state.value.step !== 'welcome')
 
 .header-icon-button {
   display: inline-grid;
-  width: 2.55rem;
-  height: 2.55rem;
+  width: 2.75rem;
+  height: 2.75rem;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--c-rose) 18%, transparent);
   border-radius: 999px;
@@ -234,8 +234,8 @@ const showRestart = computed(() => state.value.step !== 'welcome')
   }
 
   .header-icon-button {
-    width: 2.45rem;
-    height: 2.45rem;
+    width: 2.75rem;
+    height: 2.75rem;
   }
 }
 </style>

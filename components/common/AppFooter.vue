@@ -78,7 +78,7 @@ function toggle(): void {
 
 .secret-toggle {
   display: inline-flex;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   align-items: center;
   gap: 0.3rem;
   border: 0;

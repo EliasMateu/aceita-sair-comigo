@@ -207,7 +207,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   overflow: hidden;
-  min-height: 2.55rem;
+  min-height: 2.75rem;
   border: 1px solid color-mix(in srgb, var(--c-rose) 22%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--c-paper-soft) 58%, transparent);
@@ -230,7 +230,8 @@ onBeforeUnmount(() => {
 
 .music-compact__toggle {
   gap: 0.42rem;
-  min-height: 2.5rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: 0 0.8rem;
   font-size: 0.72rem;
   font-weight: 800;
@@ -238,8 +239,8 @@ onBeforeUnmount(() => {
 }
 
 .music-compact__volume {
-  width: 2.45rem;
-  min-height: 2.5rem;
+  width: 2.75rem;
+  min-height: 2.75rem;
   border-left: 1px solid color-mix(in srgb, var(--c-rose) 18%, transparent);
 }
 
