@@ -22,12 +22,16 @@ const props = withDefaults(
     minDate?: string
     maxMonthsAhead?: number
     label?: string
+    invalid?: boolean
+    errorId?: string
   }>(),
   {
     modelValue: null,
     minDate: () => todayISO(),
     maxMonthsAhead: 18,
     label: 'Escolha o dia do nosso date',
+    invalid: false,
+    errorId: undefined,
   },
 )
 
@@ -39,6 +43,10 @@ const root = ref<HTMLElement | null>(null)
 const focusedISO = ref<string | null>(null)
 const describedBy = useId()
 const headingId = useId()
+
+const describedByIds = computed(() =>
+  props.errorId ? `${describedBy} ${props.errorId}` : describedBy,
+)
 
 const minDate = computed(() =>
   isValidISODate(props.minDate) ? props.minDate : todayISO(),
@@ -268,7 +276,8 @@ defineExpose({ focusFirst })
       class="date-calendar__grid"
       role="group"
       :aria-label="label"
-      :aria-describedby="describedBy"
+      :aria-describedby="describedByIds"
+      :aria-invalid="invalid ? 'true' : undefined"
     >
       <template v-for="cell in cells" :key="cell.iso">
         <span
@@ -326,8 +335,8 @@ defineExpose({ focusFirst })
 
 .date-calendar__nav {
   display: grid;
-  width: 2.45rem;
-  height: 2.45rem;
+  width: 2.75rem;
+  height: 2.75rem;
   flex: 0 0 auto;
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--c-rose) 20%, var(--c-paper-deep));
@@ -354,7 +363,7 @@ defineExpose({ focusFirst })
 .date-calendar__grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 0.28rem;
+  gap: 0.18rem;
 }
 
 .date-calendar__weekdays {
@@ -368,13 +377,13 @@ defineExpose({ focusFirst })
 }
 
 .date-calendar__spacer {
-  min-height: 2.45rem;
+  min-height: 2.75rem;
 }
 
 .date-calendar__day {
   position: relative;
   display: grid;
-  min-height: 2.45rem;
+  min-height: 2.75rem;
   place-items: center;
   border: 1px solid transparent;
   border-radius: 999px;
@@ -437,12 +446,12 @@ defineExpose({ focusFirst })
 @media (max-width: 380px) {
   .date-calendar__weekdays,
   .date-calendar__grid {
-    gap: 0.15rem;
+    gap: 0.12rem;
   }
 
   .date-calendar__day,
   .date-calendar__spacer {
-    min-height: 2.25rem;
+    min-height: 2.75rem;
   }
 
   .date-calendar__day {

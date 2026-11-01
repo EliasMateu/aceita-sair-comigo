@@ -336,7 +336,7 @@ function handleNavigate(step: FlowStep): void {
 
 .summary__edit {
   display: inline-flex;
-  min-height: 2.4rem;
+  min-height: 2.75rem;
   flex: 0 0 auto;
   align-items: center;
   gap: 0.3rem;
