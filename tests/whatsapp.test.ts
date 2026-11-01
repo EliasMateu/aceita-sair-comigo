@@ -75,7 +75,7 @@ describe('buildWhatsAppUrl', () => {
     const url = buildWhatsAppUrl('+55 (15) 99740-2280', copy.intro)
 
     expect(url).toMatch(/^https:\/\/wa\.me\/5515997402280\?text=/)
-    expect(decodeURIComponent(url!.split('text=')[1]!)).toBe(copy.intro)
+    expect(new URL(url!).searchParams.get('text')).toBe(copy.intro)
   })
 
   it('returns null for a missing number', () => {
