@@ -105,6 +105,31 @@ const showRestart = computed(() => state.value.step !== 'welcome')
   color: #fff4ed;
 }
 
+.site-header--dark :deep(.music-compact) {
+  border-color: color-mix(in srgb, #f6dfd9 18%, transparent);
+  background: color-mix(in srgb, #fff4ed 7%, transparent);
+  box-shadow: 0 8px 20px -18px #000;
+}
+
+.site-header--dark :deep(.music-compact__toggle),
+.site-header--dark :deep(.music-compact__volume) {
+  color: color-mix(in srgb, #f6dfd9 82%, transparent);
+}
+
+.site-header--dark :deep(.music-compact__volume) {
+  border-left-color: color-mix(in srgb, #f6dfd9 18%, transparent);
+}
+
+.site-header--dark :deep(.music-compact__toggle:hover),
+.site-header--dark :deep(.music-compact__volume:hover) {
+  background: color-mix(in srgb, #fff4ed 12%, transparent);
+  color: #fff4ed;
+}
+
+.site-header--dark :deep(.music-compact__toggle[aria-pressed="true"]) {
+  color: #f3b9c3;
+}
+
 .site-header::after {
   position: absolute;
   right: var(--page-gutter);

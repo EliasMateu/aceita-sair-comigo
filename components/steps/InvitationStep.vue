@@ -68,6 +68,8 @@ function choosePosition(): { left: number; top: number } {
   const maxTop = Math.max(MARGIN, viewportHeight - buttonSize.height - MARGIN)
   const acceptRect =
     document.getElementById('accept-invitation')?.getBoundingClientRect() ?? null
+  const headerRect =
+    document.querySelector('.site-header')?.getBoundingClientRect() ?? null
   const minDistance = Math.min(
     180,
     Math.max(70, Math.min(viewportWidth, viewportHeight) * 0.22),
@@ -89,15 +91,20 @@ function choosePosition(): { left: number; top: number } {
         candidate.top - floatingPosition.top,
       ) >= minDistance
     const avoidsAccept = !acceptRect || !rectanglesOverlap(candidateBox, acceptRect)
+    const avoidsHeader = !headerRect || candidateBox.top >= headerRect.bottom + 12
 
-    if (isFarEnough && avoidsAccept) {
+    if (isFarEnough && avoidsAccept && avoidsHeader) {
       return candidate
     }
   }
 
+  const safeTop = headerRect
+    ? Math.max(MARGIN, Math.min(maxTop, headerRect.bottom + 12))
+    : MARGIN
+
   return {
     left: randomBetween(MARGIN, maxLeft),
-    top: randomBetween(MARGIN, maxTop),
+    top: randomBetween(safeTop, maxTop),
   }
 }
 
@@ -112,9 +119,12 @@ function ensureInViewport(): void {
     MARGIN,
     window.innerHeight - buttonSize.height - MARGIN,
   )
+  const headerBottom =
+    document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0
+  const safeTop = Math.max(MARGIN, Math.min(maxTop, headerBottom + 12))
 
   floatingPosition.left = clamp(floatingPosition.left, MARGIN, maxLeft)
-  floatingPosition.top = clamp(floatingPosition.top, MARGIN, maxTop)
+  floatingPosition.top = clamp(floatingPosition.top, safeTop, maxTop)
 }
 
 function nextMessage(): string {
